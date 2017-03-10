@@ -1,0 +1,7 @@
+language: ruby
+rvm:
+  - 2.4.0
+script:
+  - bin/rake db:migrate RACK_ENV=test
+  - bin/rake
+
