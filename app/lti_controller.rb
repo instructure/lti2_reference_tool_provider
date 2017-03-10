@@ -7,7 +7,8 @@ class LtiController < Sinatra::Base
 
   # register
   #
-  # Handles incoming tool proxy registration requests and
+  # Handles incoming tool proxy registration requests, fetches
+  # the tool consumer profile from the tool consumer, and
   # creates a tool proxy in the tool consumer. See section
   # 4.5 of the LTI 2.1 spec
   post '/register' do
@@ -26,12 +27,14 @@ class LtiController < Sinatra::Base
     tp_response = HTTParty.post(tp_endpoint, signed_request)
 
     # 3. Make the tool proxy available (See section 6.1.4)
-    #    - Get the redirect URL
+    #    - Get the redirect URL (See section 4.4)
     redirect_url = "#{params[:launch_presentation_return_url]}?"
 
     #    - Get the tool proxy guid from the tool proxy create response
     tool_proxy_guid = JSON.parse(tp_response.body)['tool_proxy_guid']
-    #    - Check for success and redirect to TC with proper query parameters
+
+    #    - Check for success and redirect to the tool consumer with proper
+    #      query parameters (See section 6.1.4).
     if tp_response.code == 201
       redirect_url << "tool_proxy_guid=#{tool_proxy_guid}&status=success"
 

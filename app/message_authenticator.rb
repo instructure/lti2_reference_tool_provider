@@ -21,7 +21,7 @@ class MessageAuthenticator
   # header
   #
   # Assembles the authorization header using
-  # the provided secret to verify signature
+  # the provided secret
   def header
     simple_oauth_header = SimpleOAuth::Header.new(
       :post, launch_url,

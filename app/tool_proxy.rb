@@ -3,7 +3,7 @@ require 'sinatra/activerecord'
 class ToolProxy < ActiveRecord::Base
   # to_json
   #
-  # Returns a tool proxy JSON ready to be sent in the
+  # Returns a tool proxy as JSON ready to be sent in the
   # tool proxy post request to the tool provider (See section 6.1.3)
   def to_json(request)
     {
