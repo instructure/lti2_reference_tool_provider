@@ -88,4 +88,20 @@ describe LtiController do
       end
     end
   end
+
+  describe '/basic-launch' do
+    it 'returns 404 if tool proxy not found' do
+      post '/basic-launch', params
+      expect(last_response).to be_not_found
+    end
+
+    it 'returns 401 if OAuth 1 signature is invalid' do
+      ToolProxy.create!(guid: tool_proxy_guid,
+                        shared_secret: secret,
+                        tcp_url: 'test.com',
+                        base_url: 'base.url.com')
+      post '/basic-launch', params
+      expect(last_response).to be_unauthorized
+    end
+  end
 end
