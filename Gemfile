@@ -7,7 +7,7 @@ gem 'rake'
 gem 'require_all'
 gem 'sqlite3'
 gem 'httparty'
-gem 'simple_oauth'
+gem 'simple_oauth', :git => "git://github.com/westonkd/simple_oauth.git"
 
 group :test, :development do
   gem 'rb-readline'

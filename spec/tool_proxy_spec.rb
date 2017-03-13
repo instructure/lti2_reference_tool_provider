@@ -12,7 +12,7 @@ describe ToolProxy do
     let(:secret){ 'test_shared_secret' }
     let(:tcp_url){ 'http://www.test.com/tcp' }
     let(:request){ double(base_url: 'http://www.test.com') }
-    let(:tp_json){ ToolProxy.create(guid: guid, tcp_url: tcp_url, shared_secret: secret).to_json(request) }
+    let(:tp_json){ ToolProxy.create!(guid: guid, tcp_url: tcp_url, shared_secret: secret, base_url: request.base_url).to_json }
 
     it "includes a valid '@context'" do
       expect(JSON.parse(tp_json)['@context']).to eq 'http://purl.imsglobal.org/ctx/lti/v2/ToolProxy'

@@ -22,7 +22,7 @@ describe MessageAuthenticator do
       lti_version: "LTI-2p0",
       resource_link_id: "0f5c211411bd78638d3f024f771f7ae9d020a352",
       user_id: "14e94b100f487430355fd888cf3d298ae474188b"
-    }
+    }.with_indifferent_access
   end
   let(:message_authenticator) { MessageAuthenticator.new(launch_url: launch_url, secret: secret, params: params) }
 

@@ -15,27 +15,33 @@ describe LtiController do
     context 'successful tool proxy registration' do
 
       before(:each) do
+        HTTParty.stub(:get).and_return(tool_consumer_profile.to_json)
+        HTTParty.stub(:post).and_return(tool_proxy_response)
+      end
+
+      it 'registers a tool proxy' do
         http_party = class_double(HTTParty).as_stubbed_const
         expect(http_party).to receive_messages(get: tool_consumer_profile.to_json)
         expect(http_party).to receive_messages(post: tool_proxy_response)
-
         post '/register', {tc_profile_url: tcp_url,
                            launch_presentation_return_url: return_url}
       end
 
-      it 'registers a tool proxy' do
-        expect(last_response).to be_redirect
-      end
-
       it 'redirects to the launch_presentation_return_url' do
+        post '/register', {tc_profile_url: tcp_url,
+                           launch_presentation_return_url: return_url}
         expect(URI.parse(last_response.original_headers['Location']).path).to eq return_url
       end
 
       it 'includes status=success in redirect to launch presentation URL when successful' do
+        post '/register', {tc_profile_url: tcp_url,
+                           launch_presentation_return_url: return_url}
         expect(last_response.original_headers['Location']).to include("status=success")
       end
 
       it 'includes tool proxy guid in redirect to launch presentation URL when successful' do
+        post '/register', {tc_profile_url: tcp_url,
+                           launch_presentation_return_url: return_url}
         expect(last_response.original_headers['Location']).to include("tool_proxy_guid=#{tool_proxy_guid}")
       end
 
@@ -47,14 +53,20 @@ describe LtiController do
       end
 
       it 'sets the tool proxy guid' do
+        post '/register', {tc_profile_url: tcp_url,
+                           launch_presentation_return_url: return_url}
         expect(ToolProxy.last.guid).to eq tool_proxy_guid
       end
 
       it 'sets the tool proxy shared secret' do
+        post '/register', {tc_profile_url: tcp_url,
+                           launch_presentation_return_url: return_url}
         expect(ToolProxy.last.shared_secret).not_to be_blank
       end
 
       it 'sets the TCP URL' do
+        post '/register', {tc_profile_url: tcp_url,
+                           launch_presentation_return_url: return_url}
         expect(ToolProxy.last.tcp_url).to eq tcp_url
       end
     end

@@ -2,7 +2,7 @@ require 'securerandom'
 
 class LtiController < Sinatra::Base
   register Sinatra::ActiveRecordExtension
-  set :views, ->{ root }
+  set :views, ->{ File.join(root, '/views') }
   set :protection, except: :frame_options
 
   # register
@@ -15,7 +15,6 @@ class LtiController < Sinatra::Base
     # 1. Fetch tool consumer profile (See section 6.1.2)
     tcp_url = URI.parse(params[:tc_profile_url])
     tcp = JSON.parse(HTTParty.get(tcp_url))
-    tool_proxy = ToolProxy.new(tcp_url: tcp_url, shared_secret: SecureRandom.hex(128))
 
     # 2. Register the tool proxy with the tool consumer (See section 6.1.3)
     #    - Find the ToolProxy.collection service endpoint from
@@ -23,23 +22,26 @@ class LtiController < Sinatra::Base
     tp_endpoint = tool_proxy_service_endpoint(tcp)
 
     #    - Construct the signed tool proxy request and send (See section 6.1.3)
+    tool_proxy = ToolProxy.new(tcp_url: tcp_url,
+                               shared_secret: SecureRandom.hex(128),
+                               base_url:  request.base_url)
     signed_request = tool_proxy_signed_post(tool_proxy, tp_endpoint)
     tp_response = HTTParty.post(tp_endpoint, signed_request)
 
     # 3. Make the tool proxy available (See section 6.1.4)
-    #    - Get the redirect URL (See section 4.4)
-    redirect_url = "#{params[:launch_presentation_return_url]}?"
-
-    #    - Get the tool proxy guid from the tool proxy create response
-    tool_proxy_guid = JSON.parse(tp_response.body)['tool_proxy_guid']
-
     #    - Check for success and redirect to the tool consumer with proper
-    #      query parameters (See section 6.1.4).
+    #      query parameters (See section 6.1.4 and 4.4).
+    redirect_url = "#{params[:launch_presentation_return_url]}?"
     if tp_response.code == 201
-      redirect_url << "tool_proxy_guid=#{tool_proxy_guid}&status=success"
 
-      # Persist the tool proxy
+      #  - Get the tool proxy guid from the tool proxy create response
+      tool_proxy_guid = JSON.parse(tp_response.body)['tool_proxy_guid']
+
+      #  - Persist the tool proxy
       tool_proxy.update_attributes(guid: tool_proxy_guid)
+
+      # - Setup the redirect query parameters
+      redirect_url << "tool_proxy_guid=#{tool_proxy_guid}&status=success"
     else
       redirect_url << "status=failure"
     end
@@ -55,16 +57,18 @@ class LtiController < Sinatra::Base
   #
   # Renders 401 if the request's oauth signature is invalid
   post '/basic-launch' do
-    # Lookup the tool proxy by guid
+    # Lookup the tool proxy by guid. Return 404 if the tool proxy is not found.
     tool_proxy = ToolProxy.find_by(guid: params['oauth_consumer_key']) || halt(404)
 
     # Retrieve the tool proxy's shared secret
     shared_secret = tool_proxy.shared_secret
 
-    # Verify incoming request signature
+    # Verify incoming request signature. MessageAuthenticator validates the OAuth1
+    # signature.
     authenticator = MessageAuthenticator.new(launch_url:"#{request.base_url}#{request.path}",
                                              params: params,
                                              secret: shared_secret)
+
     halt(401) unless authenticator.valid_signature?
 
     erb :basic_launch
@@ -76,10 +80,13 @@ class LtiController < Sinatra::Base
   #
   # Finds the tool proxy collection service.
   #
-  # The @id of the needed service from the TCP's 'service_offered'
-  # section should end with 'ToolProxy.collection' (See section 10.1)
+  # Search for the RestService in the TCP that supports the
+  # "application/vnd.ims.lti.v2.toolproxy+json" format (See section 10.1)
   def tool_proxy_service_endpoint(tcp)
-    tp_services = tcp['service_offered'].find { |s| s['@id'].split('#').last == 'ToolProxy.collection' }
+    tp_services = tcp['service_offered'].find do |s|
+      s['format'] == [ToolProxy::TOOL_PROXY_FORMAT]
+    end
+
     # Retrieve and return the endpoint of the ToolProxy.collection service
     URI.parse(tp_services['endpoint']) unless tp_services.blank?
   end
@@ -93,6 +100,7 @@ class LtiController < Sinatra::Base
     options = {
       consumer_secret: params[:reg_password],
       consumer_key: params[:reg_key],
+      body_hash: Digest::SHA1.base64digest(tool_proxy.to_json),
       callback: 'about:blank'
     }
 
@@ -106,7 +114,7 @@ class LtiController < Sinatra::Base
 
     # Assemble and return the request
     {
-      body: tool_proxy.to_json(request),
+      body: tool_proxy.to_json,
       headers: {
         'Content-Type' => 'application/vnd.ims.lti.v2.toolproxy+json',
         'Authorization' => header.to_s

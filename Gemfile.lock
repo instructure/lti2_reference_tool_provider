@@ -1,3 +1,9 @@
+GIT
+  remote: git://github.com/westonkd/simple_oauth.git
+  revision: b4564b35e949d2979bd8bb84173eb593ef5b793d
+  specs:
+    simple_oauth (0.3.1)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -16,7 +22,7 @@ GEM
     byebug (9.0.6)
     coderay (1.1.1)
     concurrent-ruby (1.0.5)
-    database_cleaner (1.3.0)
+    database_cleaner (1.5.3)
     diff-lcs (1.3)
     httparty (0.14.0)
       multi_xml (>= 0.5.2)
@@ -52,7 +58,6 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.5.0)
     rspec-support (3.5.0)
-    simple_oauth (0.3.1)
     sinatra (1.4.8)
       rack (~> 1.5)
       rack-protection (~> 1.4)
@@ -80,7 +85,7 @@ DEPENDENCIES
   rb-readline
   require_all
   rspec
-  simple_oauth
+  simple_oauth!
   sinatra
   sinatra-activerecord
   sqlite3

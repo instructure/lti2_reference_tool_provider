@@ -10,12 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170309153442) do
+ActiveRecord::Schema.define(version: 20170313181044) do
+
+  create_table "oauth_nonces", force: :cascade do |t|
+    t.string "value", null: false
+    t.index ["value"], name: "index_oauth_nonces_on_value"
+  end
 
   create_table "tool_proxies", force: :cascade do |t|
     t.string "guid",          null: false
     t.string "shared_secret", null: false
     t.string "tcp_url",       null: false
+    t.string "base_url",      null: false
     t.index ["guid"], name: "index_tool_proxies_on_guid"
   end
 
