@@ -31,15 +31,15 @@ RSpec.shared_context 'lti_spec_helper', shared_context: :metadata do
     }
   end
 
-  let(:tool_proxy_guid) { 'bdecc237-fecb-4f1a-a455-109cbd618406' }
-
+  let(:tool_proxy_guid){ 'bdecc237-fecb-4f1a-a455-109cbd618406' }
+  let(:tc_half_shared_secret){ 'tool-consumer-half-split-secret' }
   let(:tool_proxy_response_body) do
     {
       '@context' => 'http://purl.imsglobal.org/ctx/lti/v2/ToolProxyId',
       '@type' => 'ToolProxy',
       '@id' => nil,
       'tool_proxy_guid' => tool_proxy_guid,
-      'tc_half_shared_secret' => 'tool-consumer-half-split-secret'
+      'tc_half_shared_secret' => tc_half_shared_secret
     }
   end
 

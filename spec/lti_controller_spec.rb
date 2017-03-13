@@ -64,6 +64,12 @@ describe LtiController do
         expect(ToolProxy.last.shared_secret).not_to be_blank
       end
 
+      it "prepends the 'tc_half_shared_secret' to the shared secret" do
+        post '/register', {tc_profile_url: tcp_url,
+                           launch_presentation_return_url: return_url}
+        expect(ToolProxy.last.shared_secret).to include tc_half_shared_secret
+      end
+
       it 'sets the TCP URL' do
         post '/register', {tc_profile_url: tcp_url,
                            launch_presentation_return_url: return_url}
