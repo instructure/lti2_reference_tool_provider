@@ -23,7 +23,7 @@ class LtiController < Sinatra::Base
 
     #    - Construct the signed tool proxy request and send (See section 6.1.3)
     tool_proxy = ToolProxy.new(tcp_url: tcp_url,
-                               shared_secret: SecureRandom.hex(128),
+                               tp_half_shared_secret: SecureRandom.hex(64),
                                base_url:  request.base_url)
     signed_request = tool_proxy_signed_post(tool_proxy, tp_endpoint)
     tp_response = HTTParty.post(tp_endpoint, signed_request)
@@ -37,8 +37,14 @@ class LtiController < Sinatra::Base
       #  - Get the tool proxy guid from the tool proxy create response
       tool_proxy_guid = JSON.parse(tp_response.body)['tool_proxy_guid']
 
+      #  - Get the tool consumer half of the shared split secret and construct
+      #    the complete shared secret (See section 5.6).
+      tc_half_shared_secret = JSON.parse(tp_response.body)['tc_half_shared_secret']
+      shared_secret = tc_half_shared_secret + tool_proxy.tp_half_shared_secret
+
       #  - Persist the tool proxy
-      tool_proxy.update_attributes(guid: tool_proxy_guid)
+      tool_proxy.update_attributes(guid: tool_proxy_guid,
+                                   shared_secret: shared_secret)
 
       # - Setup the redirect query parameters
       redirect_url << "tool_proxy_guid=#{tool_proxy_guid}&status=success"
