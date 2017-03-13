@@ -24,7 +24,7 @@ class ToolProxy < ActiveRecord::Base
       tool_consumer_profile: tcp_url,
       tool_profile: tool_profile,
       security_contract: security_contract,
-      enabled_capability: [] # (Section 5.3)
+      enabled_capability: ['Security.splitSecret'] # (Section 5.3)
     })
   end
 
@@ -50,7 +50,7 @@ class ToolProxy < ActiveRecord::Base
   # Returns the security contract for use in the tool proxy (See section 5.6)
   def security_contract
     {
-      shared_secret: shared_secret
+      tp_half_shared_secret: tp_half_shared_secret
     }
   end
 

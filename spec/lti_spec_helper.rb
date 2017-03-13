@@ -1,32 +1,32 @@
 require_relative 'spec_helper'
 
-RSpec.shared_context "lti_spec_helper", shared_context: :metadata do
+RSpec.shared_context 'lti_spec_helper', shared_context: :metadata do
   include_context 'spec_helper'
 
   let(:tool_consumer_profile) do
     {
-       "lti_version" => "LTI-2p0",
-       "guid" => "339b6700-e4cb-47c5-a54f-3ee0064921a9",
-       "capability_offered" => [
-          "User.id",
+       'lti_version' => 'LTI-2p0',
+       'guid' => '339b6700-e4cb-47c5-a54f-3ee0064921a9',
+       'capability_offered' => [
+          'User.id',
        ],
-       "service_offered" => [
+       'service_offered' => [
         {
-          "endpoint" => "http://canvas.docker:80/api/lti/courses/2/tool_proxy",
-             "format" => [
-                "application/vnd.ims.lti.v2.toolproxy+json"
+          'endpoint' => 'http://canvas.docker:80/api/lti/courses/2/tool_proxy',
+             'format' => [
+                'application/vnd.ims.lti.v2.toolproxy+json'
              ],
-             "action" => [
-                "POST"
+             'action' => [
+                'POST'
              ],
-             "@id" => "http://canvas.docker/api/lti/courses/2/tool_consumer_profile/339b6700-e4cb-47c5-a54f-3ee0064921a9#ToolProxy.collection",
-             "@type" => "RestService"
+             '@id' => 'http://canvas.docker/api/lti/courses/2/tool_consumer_profile/339b6700-e4cb-47c5-a54f-3ee0064921a9#ToolProxy.collection',
+             '@type' => 'RestService'
           }
        ],
-       "@id" => "http://canvas.docker/api/lti/courses/2/tool_consumer_profile/339b6700-e4cb-47c5-a54f-3ee0064921a9",
-       "@type" => "ToolConsumerProfile",
-       "@context" => [
-          "http://purl.imsglobal.org/ctx/lti/v2/ToolConsumerProfile"
+       '@id' => 'http://canvas.docker/api/lti/courses/2/tool_consumer_profile/339b6700-e4cb-47c5-a54f-3ee0064921a9',
+       '@type' => 'ToolConsumerProfile',
+       '@context' => [
+          'http://purl.imsglobal.org/ctx/lti/v2/ToolConsumerProfile'
        ]
     }
   end
@@ -35,10 +35,11 @@ RSpec.shared_context "lti_spec_helper", shared_context: :metadata do
 
   let(:tool_proxy_response_body) do
     {
-      "@context" => "http://purl.imsglobal.org/ctx/lti/v2/ToolProxyId",
-      "@type" => "ToolProxy",
-      "@id" => nil,
-      "tool_proxy_guid" => tool_proxy_guid
+      '@context' => 'http://purl.imsglobal.org/ctx/lti/v2/ToolProxyId',
+      '@type' => 'ToolProxy',
+      '@id' => nil,
+      'tool_proxy_guid' => tool_proxy_guid,
+      'tc_half_shared_secret' => 'tool-consumer-half-split-secret'
     }
   end
 
