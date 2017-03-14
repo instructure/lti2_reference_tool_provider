@@ -63,14 +63,21 @@ class LtiController < Sinatra::Base
     # Retrieve the tool proxy's shared secret
     shared_secret = tool_proxy.shared_secret
 
-    # Verify incoming request signature. MessageAuthenticator validates the OAuth1
-    # signature.
-    authenticator = MessageAuthenticator.new(launch_url:"#{request.base_url}#{request.path}",
-                                             params: params,
-                                             secret: shared_secret)
+    # Assemble the header to validate the OAuth1 signature
+    options = {
+      consumer_key: params['oauth_consumer_key'],
+      consumer_secret: shared_secret,
+      callback: 'about:blank'
+    }
+    launch_url = "#{request.base_url}#{request.path}"
+    header = SimpleOAuth::Header.new(:post, launch_url, params, options)
 
-    halt(401) unless authenticator.valid_signature?
+    # Render unauthorized if the signature is invalid
+    # NOTE: A check should also be done to detect and reject duplicate
+    # nonces.
+    halt(401) unless header.valid?
 
+    # Render
     erb :basic_launch
   end
 
