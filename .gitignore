@@ -1,0 +1,9 @@
+*.gem
+*.rbc
+*.sqlite3
+*DS_Store
+
+## Environment normalization:
+/.bundle/
+/vendor/bundle
+/lib/bundler/man/
