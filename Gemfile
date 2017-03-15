@@ -13,6 +13,7 @@ gem 'require_all'
 gem 'sqlite3'
 gem 'httparty'
 gem 'simple_oauth', :git => "git://github.com/westonkd/simple_oauth.git"
+gem 'json-jwt'
 
 group :test, :development do
   gem 'rb-readline'

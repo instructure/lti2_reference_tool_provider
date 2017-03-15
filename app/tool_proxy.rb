@@ -105,7 +105,56 @@ class ToolProxy < ActiveRecord::Base
       },
       "message" => [{
         "message_type" => "basic-lti-launch-request", "path" => "/basic-launch",
-        "enabled_capability" => []
+        "enabled_capability" => [],
+        # Custom parameter substitutions
+        # Note that the value of 'name' be set to an arbitary value,
+        # but will be prepended with 'custom_' when sent in the launch.
+        "parameter": [
+          {
+            "name" => "account_name",
+            "variable" => "Canvas.account.name"
+          },
+          {
+            "name" => "course_id",
+            "variable" => "Canvas.course.id"
+          },
+          {
+            "name" => "course_start_at",
+            "variable" => "Canvas.course.startAt"
+          },
+          {
+            "name" => "term_start_at",
+            "variable" => "Canvas.term.startAt"
+          },
+          {
+            "name" => "user_login_id",
+            "variable" => "Canvas.user.loginid"
+          },
+          {
+            "name" => "membership_roles",
+            "variable" => "Canvas.membership.roles"
+          },
+          {
+            "name" => "user_name_full",
+            "variable" => "Person.name.full"
+          },
+          {
+            "name" => "message_locale",
+            "variable" => "Message.locale"
+          },
+          {
+            "name" => "user_timezone",
+            "variable" => "Person.address.timezone"
+          },
+          {
+            "name" => "user_image",
+            "variable" => "User.image"
+          },
+          {
+            "name" => "high_contrast",
+            "variable" => "Canvas.user.prefersHighContrast"
+          }
+        ]
       }]
     }]
   end
