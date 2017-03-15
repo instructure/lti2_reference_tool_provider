@@ -64,10 +64,16 @@ describe LtiController do
         expect(ToolProxy.last.shared_secret).not_to be_blank
       end
 
+      it "uses a 'tp_half_shared_secret' with 128 chars" do
+        post '/register', {tc_profile_url: tcp_url,
+                           launch_presentation_return_url: return_url}
+        expect(ToolProxy.last.tp_half_shared_secret.length).to eq 128
+      end
+
       it "prepends the 'tc_half_shared_secret' to the shared secret" do
         post '/register', {tc_profile_url: tcp_url,
                            launch_presentation_return_url: return_url}
-        expect(ToolProxy.last.shared_secret).to include tc_half_shared_secret
+        expect(ToolProxy.last.shared_secret).to start_with tc_half_shared_secret
       end
 
       it 'sets the TCP URL' do
@@ -104,6 +110,7 @@ describe LtiController do
     it 'returns 401 if OAuth 1 signature is invalid' do
       ToolProxy.create!(guid: tool_proxy_guid,
                         shared_secret: secret,
+                        tp_half_shared_secret: secret,
                         tcp_url: 'test.com',
                         base_url: 'base.url.com')
       post '/basic-launch', params
