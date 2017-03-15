@@ -15,7 +15,7 @@ class LtiController < Sinatra::Base
 
     # 1. Get a JWT access token for use in retrieving the tool consumer profile
     # and registering a tool proxy
-    token = jwt_access_token(url: 'http://canvas.docker/api/lti/authorize',
+    token = jwt_access_token(url: 'http://canvas.docker/api/lti/authorize', # eventually this will be sent in the registration message
                              sub: '10000000000003', # Developer key global id
                              secret: 'BXfJR44Ng3czXFt02UZwrzMSFn1GcT8KjY6wUL0RJSVIv271eCoa4KLzwciSg4fD', # Developer key api key. Don't store this here ;)
                              code: params[:reg_key])
