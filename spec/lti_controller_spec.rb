@@ -15,8 +15,8 @@ describe LtiController do
     context 'successful tool proxy registration' do
 
       before(:each) do
-        HTTParty.stub(:get).and_return(tool_consumer_profile.to_json)
-        HTTParty.stub(:post).and_return(tool_proxy_response)
+        allow(HTTParty).to receive(:get).and_return(tool_consumer_profile.to_json)
+        allow(HTTParty).to receive(:post).and_return(tool_proxy_response)
       end
 
       it 'registers a tool proxy' do
