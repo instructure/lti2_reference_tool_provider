@@ -13,7 +13,7 @@ The varaible substitutions in this tool are considered "restriced capabilities" 
 ### 1. Create a Custom Tool Consumer Profile in Canvas
 Create a new `DeveloperKey` via Canvas Rails console (this should be done in siteadmin if this is for a deployed environment)
 ```
-k = DeveloperKey.new
+k = DeveloperKey.create!
 ```
 Create a new custom Tool Consumer Profile associated with the developer key
 ```
