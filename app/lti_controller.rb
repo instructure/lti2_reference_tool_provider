@@ -20,6 +20,7 @@ class LtiController < Sinatra::Base
                              secret: 'BXfJR44Ng3czXFt02UZwrzMSFn1GcT8KjY6wUL0RJSVIv271eCoa4KLzwciSg4fD', # Developer key api key. Don't store this here ;)
                              code: params[:reg_key])
 
+
     # 2. Fetch tool consumer profile (See section 6.1.2). Use the JWT access
     # token to fetch the TCP associated with the developer key.
     tcp_url = URI.parse(params[:tc_profile_url])
@@ -130,13 +131,7 @@ class LtiController < Sinatra::Base
   # of #jwt_access_token for information on using the
   # access_token
   def tcp_request(access_token, developer_key_id)
-    # Set the 'consumer_key' query parameter to the ID of the developer key
-    query = {
-      consumer_key: developer_key_id
-    }
-
     {
-      query: query,
       headers: {
         'Authorization' => "Bearer #{access_token}"
       }
@@ -170,7 +165,6 @@ class LtiController < Sinatra::Base
       jti: SecureRandom.uuid
     })
     assertion = assertion.sign(secret, :HS256).to_s
-
     request = {
       body: {
         grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
