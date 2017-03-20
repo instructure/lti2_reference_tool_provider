@@ -28,6 +28,14 @@ class ToolProxy < ActiveRecord::Base
     })
   end
 
+  # tp_half_shared_secret
+  #
+  # Generates a 128 hexadecimal character string for the Tool Provider's
+  # half of the shared secret (See section 5.6).
+  def tp_half_shared_secret
+    @_tp_half_shared_secret ||= SecureRandom.hex(64)
+  end
+
   private
 
   # tool_profile

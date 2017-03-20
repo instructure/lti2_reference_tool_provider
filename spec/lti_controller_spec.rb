@@ -110,7 +110,6 @@ describe LtiController do
     it 'returns 401 if OAuth 1 signature is invalid' do
       ToolProxy.create!(guid: tool_proxy_guid,
                         shared_secret: secret,
-                        tp_half_shared_secret: secret,
                         tcp_url: 'test.com',
                         base_url: 'base.url.com')
       post '/basic-launch', params

@@ -12,12 +12,12 @@ describe ToolProxy do
     let(:secret){ 'test_shared_secret' }
     let(:tcp_url){ 'http://www.test.com/tcp' }
     let(:request){ double(base_url: 'http://www.test.com') }
-    let(:tp_json){ ToolProxy.create!(guid: guid,
-                                     tcp_url: tcp_url,
-                                     tp_half_shared_secret: secret,
-                                     shared_secret: 'shared_secret',
-                                     base_url: request.base_url
-                                    ).to_json }
+    let(:tool_proxy){ ToolProxy.create!(guid: guid,
+                                        tcp_url: tcp_url,
+                                        shared_secret: 'shared_secret',
+                                        base_url: request.base_url
+                                       )}
+    let(:tp_json){ tool_proxy.to_json }
 
     it "includes a valid '@context'" do
       expect(JSON.parse(tp_json)['@context']).to eq 'http://purl.imsglobal.org/ctx/lti/v2/ToolProxy'
@@ -35,7 +35,7 @@ describe ToolProxy do
       expect(JSON.parse(tp_json)['enabled_capability']).not_to be_nil
     end
 
-    context 'tool_profile' do
+    context '#tool_profile' do
       let(:tool_profile){ JSON.parse(tp_json)['tool_profile'] }
 
       it "includes 'lti_version'" do
@@ -73,14 +73,24 @@ describe ToolProxy do
 
     end
 
-    context 'security_contract' do
+    context '#security_contract' do
       let(:security_contract){ JSON.parse(tp_json)['security_contract'] }
 
       it "includes 'tp_half_shared_secret'" do
-        expect(security_contract['tp_half_shared_secret']).to eq secret
+        expect(security_contract['tp_half_shared_secret']).not_to be_nil
+      end
+    end
+
+    context '#tp_half_shared_secret' do
+      it 'generates a 128 character string' do
+        expect(tool_proxy.tp_half_shared_secret.length).to eq 128
+      end
+
+      it 'does not reassign this value once it has been set' do
+        first_value = tool_proxy.tp_half_shared_secret
+        expect(tool_proxy.tp_half_shared_secret).to eq first_value
       end
     end
 
   end
-
 end

@@ -10,14 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170313191804) do
+ActiveRecord::Schema.define(version: 20170309153442) do
 
   create_table "tool_proxies", force: :cascade do |t|
-    t.string "guid",                  null: false
-    t.string "shared_secret",         null: false
-    t.string "tcp_url",               null: false
-    t.string "base_url",              null: false
-    t.string "tp_half_shared_secret", null: false
+    t.string "guid",          null: false
+    t.string "shared_secret", null: false
+    t.string "tcp_url",       null: false
+    t.string "base_url",      null: false
     t.index ["guid"], name: "index_tool_proxies_on_guid"
   end
 
