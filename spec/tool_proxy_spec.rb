@@ -8,16 +8,17 @@ describe ToolProxy do
   end
 
   describe 'to_json' do
-    let(:guid){ '12abc-12abc-12abc-12abc-12abc' }
-    let(:secret){ 'test_shared_secret' }
-    let(:tcp_url){ 'http://www.test.com/tcp' }
-    let(:request){ double(base_url: 'http://www.test.com') }
-    let(:tool_proxy){ ToolProxy.create!(guid: guid,
-                                        tcp_url: tcp_url,
-                                        shared_secret: 'shared_secret',
-                                        base_url: request.base_url
-                                       )}
-    let(:tp_json){ tool_proxy.to_json }
+    let(:guid) { '12abc-12abc-12abc-12abc-12abc' }
+    let(:secret) { 'test_shared_secret' }
+    let(:tcp_url) { 'http://www.test.com/tcp' }
+    let(:request) { double(base_url: 'http://www.test.com') }
+    let(:tool_proxy) do
+      ToolProxy.create!(guid: guid,
+                        tcp_url: tcp_url,
+                        shared_secret: 'shared_secret',
+                        base_url: request.base_url)
+    end
+    let(:tp_json) { tool_proxy.to_json }
 
     it "includes a valid '@context'" do
       expect(JSON.parse(tp_json)['@context']).to eq 'http://purl.imsglobal.org/ctx/lti/v2/ToolProxy'

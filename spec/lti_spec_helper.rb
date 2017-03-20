@@ -32,8 +32,11 @@ RSpec.shared_context 'lti_spec_helper', shared_context: :metadata do
     }
   end
 
-  let(:tool_proxy_guid){ 'bdecc237-fecb-4f1a-a455-109cbd618406' }
-  let(:tc_half_shared_secret){ 'ed6d2853c5f39633a3ac6dde202b1d100ec7a40b3ddd7827d9bb1f1433a2d31bd81186cc5f4d533208ff51d07bd0f54b96b81422171028e75aeb07e5cca241aa' }
+  let(:tool_proxy_guid) { 'bdecc237-fecb-4f1a-a455-109cbd618406' }
+  let(:tc_half_shared_secret) do
+    'ed6d2853c5f39633a3ac6dde202b1d100ec7a40b3ddd7827d9bb1f1433a2d31bd81\
+    186cc5f4d533208ff51d07bd0f54b96b81422171028e75aeb07e5cca241aa'
+  end
   let(:tool_proxy_response_body) do
     {
       '@context' => 'http://purl.imsglobal.org/ctx/lti/v2/ToolProxyId',

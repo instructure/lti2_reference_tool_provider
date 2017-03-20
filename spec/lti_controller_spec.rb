@@ -65,14 +65,14 @@ describe LtiController do
       end
 
       it "uses a 'tp_half_shared_secret' with 128 chars" do
-        post '/register', {tc_profile_url: tcp_url,
-                           launch_presentation_return_url: return_url}
+        post '/register', { tc_profile_url: tcp_url,
+                            launch_presentation_return_url: return_url }
         expect(ToolProxy.last.tp_half_shared_secret.length).to eq 128
       end
 
       it "prepends the 'tc_half_shared_secret' to the shared secret" do
-        post '/register', {tc_profile_url: tcp_url,
-                           launch_presentation_return_url: return_url}
+        post '/register', { tc_profile_url: tcp_url,
+                            launch_presentation_return_url: return_url }
         expect(ToolProxy.last.shared_secret).to start_with tc_half_shared_secret
       end
 
