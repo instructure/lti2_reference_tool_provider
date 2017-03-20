@@ -84,8 +84,8 @@ describe LtiController do
     end
 
     context 'unsuccessful tool proxy registration' do
+      let(:http_party) { class_double(HTTParty).as_stubbed_const }
       before(:each) do
-        http_party = class_double(HTTParty).as_stubbed_const
         expect(http_party).to receive_messages(get: tool_consumer_profile.to_json)
         expect(http_party).to receive_messages(post: bad_tool_proxy_response)
 
@@ -95,6 +95,15 @@ describe LtiController do
 
       it 'includes status=failure in redirect to launch presentation URL when not successful' do
         post '/register', {tc_profile_url: tcp_url,
+                           launch_presentation_return_url: return_url}
+        expect(last_response.original_headers['Location']).to include("status=failure")
+      end
+
+      it 'checks that the TCP supports required capabilities' do
+        tool_consumer_profile['capability_offered'] = []
+        expect(http_party).to receive_messages(get: tool_consumer_profile.to_json)
+
+        post '/register', { tc_profile_url: tcp_url,
                            launch_presentation_return_url: return_url}
         expect(last_response.original_headers['Location']).to include("status=failure")
       end

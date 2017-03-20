@@ -4,6 +4,7 @@ class ToolProxy < ActiveRecord::Base
   validates :guid, :shared_secret, :tcp_url, :base_url, :tp_half_shared_secret, presence: true
 
   TOOL_PROXY_FORMAT = 'application/vnd.ims.lti.v2.toolproxy+json'.freeze
+  ENABLED_CAPABILITY = %w(Security.splitSecret).freeze
 
   # to_json
   #
@@ -24,7 +25,7 @@ class ToolProxy < ActiveRecord::Base
       tool_consumer_profile: tcp_url,
       tool_profile: tool_profile,
       security_contract: security_contract,
-      enabled_capability: ['Security.splitSecret'] # (Section 5.3)
+      enabled_capability: ENABLED_CAPABILITY # (Section 5.3)
     })
   end
 

@@ -9,6 +9,7 @@ RSpec.shared_context 'lti_spec_helper', shared_context: :metadata do
        'guid' => '339b6700-e4cb-47c5-a54f-3ee0064921a9',
        'capability_offered' => [
           'User.id',
+          'Security.splitSecret'
        ],
        'service_offered' => [
         {
