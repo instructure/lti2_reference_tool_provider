@@ -1,8 +1,10 @@
 require 'securerandom'
-
+# LtiController
+#
+# Handles registration and basic LTI launches
 class LtiController < Sinatra::Base
   register Sinatra::ActiveRecordExtension
-  set :views, ->{ File.join(root, '/views') }
+  set :views, -> { File.join(root, '/views') }
   set :protection, except: :frame_options
 
   # register
