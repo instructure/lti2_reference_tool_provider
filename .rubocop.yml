@@ -1,0 +1,19 @@
+AllCops:
+  Exclude:
+    - db/migrate/*.rb
+    - db/*.rb
+
+Metrics/LineLength:
+  Max: 125
+
+MethodLength:
+  CountComments: false
+  Max: 30
+
+Style/BracesAroundHashParameters:
+  Exclude:
+    - spec/*.rb
+
+BlockLength:
+  Exclude:
+    - spec/*.rb
