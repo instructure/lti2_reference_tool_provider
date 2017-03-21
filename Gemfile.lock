@@ -1,6 +1,6 @@
 GIT
-  remote: git://github.com/westonkd/simple_oauth.git
-  revision: b4564b35e949d2979bd8bb84173eb593ef5b793d
+  remote: https://github.com/westonkd/simple_oauth.git
+  revision: 10df50cadbd7b094abcb982cf9d21854d3b275d7
   specs:
     simple_oauth (0.3.1)
 

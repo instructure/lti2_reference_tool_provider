@@ -4,7 +4,10 @@ require 'rspec/core/rake_task'
 require 'rubocop/rake_task'
 
 RSpec::Core::RakeTask.new(:spec)
-RuboCop::RakeTask.new
+
+RuboCop::RakeTask.new(:rubocop) do |t|
+  t.options = %w(app spec)
+end
 
 # Run tests
 task default: :spec
