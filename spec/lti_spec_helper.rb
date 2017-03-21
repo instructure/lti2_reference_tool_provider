@@ -1,44 +1,46 @@
 require_relative 'spec_helper'
 
-RSpec.shared_context "lti_spec_helper", shared_context: :metadata do
+RSpec.shared_context 'lti_spec_helper', shared_context: :metadata do
   include_context 'spec_helper'
 
   let(:tool_consumer_profile) do
     {
-       "lti_version" => "LTI-2p0",
-       "guid" => "339b6700-e4cb-47c5-a54f-3ee0064921a9",
-       "capability_offered" => [
-          "User.id",
+       'lti_version' => 'LTI-2p0',
+       'guid' => '339b6700-e4cb-47c5-a54f-3ee0064921a9',
+       'capability_offered' => [
+          'User.id',
+          'Security.splitSecret'
        ],
-       "service_offered" => [
+       'service_offered' => [
         {
-          "endpoint" => "http://canvas.docker:80/api/lti/courses/2/tool_proxy",
-             "format" => [
-                "application/vnd.ims.lti.v2.toolproxy+json"
+          'endpoint' => 'http://canvas.docker:80/api/lti/courses/2/tool_proxy',
+             'format' => [
+                'application/vnd.ims.lti.v2.toolproxy+json'
              ],
-             "action" => [
-                "POST"
+             'action' => [
+                'POST'
              ],
-             "@id" => "http://canvas.docker/api/lti/courses/2/tool_consumer_profile/339b6700-e4cb-47c5-a54f-3ee0064921a9#ToolProxy.collection",
-             "@type" => "RestService"
+             '@id' => 'http://canvas.docker/api/lti/courses/2/tool_consumer_profile/339b6700-e4cb-47c5-a54f-3ee0064921a9#ToolProxy.collection',
+             '@type' => 'RestService'
           }
        ],
-       "@id" => "http://canvas.docker/api/lti/courses/2/tool_consumer_profile/339b6700-e4cb-47c5-a54f-3ee0064921a9",
-       "@type" => "ToolConsumerProfile",
-       "@context" => [
-          "http://purl.imsglobal.org/ctx/lti/v2/ToolConsumerProfile"
+       '@id' => 'http://canvas.docker/api/lti/courses/2/tool_consumer_profile/339b6700-e4cb-47c5-a54f-3ee0064921a9',
+       '@type' => 'ToolConsumerProfile',
+       '@context' => [
+          'http://purl.imsglobal.org/ctx/lti/v2/ToolConsumerProfile'
        ]
     }
   end
 
-  let(:tool_proxy_guid) { '4b1f5211-03ec-4769-b0eb-3326486636ed' }
-
+  let(:tool_proxy_guid){ 'bdecc237-fecb-4f1a-a455-109cbd618406' }
+  let(:tc_half_shared_secret){ 'ed6d2853c5f39633a3ac6dde202b1d100ec7a40b3ddd7827d9bb1f1433a2d31bd81186cc5f4d533208ff51d07bd0f54b96b81422171028e75aeb07e5cca241aa' }
   let(:tool_proxy_response_body) do
     {
-      "@context" => "http://purl.imsglobal.org/ctx/lti/v2/ToolProxyId",
-      "@type" => "ToolProxy",
-      "@id" => nil,
-      "tool_proxy_guid" => tool_proxy_guid
+      '@context' => 'http://purl.imsglobal.org/ctx/lti/v2/ToolProxyId',
+      '@type' => 'ToolProxy',
+      '@id' => nil,
+      'tool_proxy_guid' => tool_proxy_guid,
+      'tc_half_shared_secret' => tc_half_shared_secret
     }
   end
 

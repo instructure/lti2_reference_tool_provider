@@ -16,6 +16,13 @@ class LtiController < Sinatra::Base
     tcp_url = URI.parse(params[:tc_profile_url])
     tcp = JSON.parse(HTTParty.get(tcp_url))
 
+    # Render 'bad request' unless the Tool Consumer supports the needed
+    # capabilities (i.e. 'Security.splitSecret').
+    #
+    # Alternatively fallback on registering with a traditional shared secret
+    # the Tool Consumer does not support using.
+    registration_failure_redirect unless supports_required_capabilities?(tcp)
+
     # 2. Register the tool proxy with the tool consumer (See section 6.1.3)
     #    - Find the ToolProxy.collection service endpoint from
     #      the TCP (See section 10.1)
@@ -23,7 +30,6 @@ class LtiController < Sinatra::Base
 
     #    - Construct the signed tool proxy request and send (See section 6.1.3)
     tool_proxy = ToolProxy.new(tcp_url: tcp_url,
-                               shared_secret: SecureRandom.hex(128),
                                base_url:  request.base_url)
     signed_request = tool_proxy_signed_post(tool_proxy, tp_endpoint)
     tp_response = HTTParty.post(tp_endpoint, signed_request)
@@ -31,20 +37,22 @@ class LtiController < Sinatra::Base
     # 3. Make the tool proxy available (See section 6.1.4)
     #    - Check for success and redirect to the tool consumer with proper
     #      query parameters (See section 6.1.4 and 4.4).
-    redirect_url = "#{params[:launch_presentation_return_url]}?"
-    if tp_response.code == 201
+    registration_failure_redirect unless tp_response.code == 201
 
-      #  - Get the tool proxy guid from the tool proxy create response
-      tool_proxy_guid = JSON.parse(tp_response.body)['tool_proxy_guid']
+    #    - Get the tool proxy guid from the tool proxy create response
+    tool_proxy_guid = JSON.parse(tp_response.body)['tool_proxy_guid']
 
-      #  - Persist the tool proxy
-      tool_proxy.update_attributes(guid: tool_proxy_guid)
+    #    - Get the tool consumer half of the shared split secret and construct
+    #    the complete shared secret (See section 5.6).
+    tc_half_shared_secret = JSON.parse(tp_response.body)['tc_half_shared_secret']
+    shared_secret = tc_half_shared_secret + tool_proxy.tp_half_shared_secret
 
-      # - Setup the redirect query parameters
-      redirect_url << "tool_proxy_guid=#{tool_proxy_guid}&status=success"
-    else
-      redirect_url << "status=failure"
-    end
+    #    - Persist the tool proxy
+    tool_proxy.update_attributes(guid: tool_proxy_guid,
+                                 shared_secret: shared_secret)
+
+    # - Setup the redirect query parameters
+    redirect_url = "#{params[:launch_presentation_return_url]}?tool_proxy_guid=#{tool_proxy_guid}&status=success"
     redirect redirect_url
   end
 
@@ -96,6 +104,19 @@ class LtiController < Sinatra::Base
 
     # Retrieve and return the endpoint of the ToolProxy.collection service
     URI.parse(tp_services['endpoint']) unless tp_services.blank?
+  end
+
+  # split_secret_capable_consumer?
+  #
+  # Checks if the tool consumer supports split
+  # secret (See section 5.6).
+  def supports_required_capabilities?(tcp)
+    (ToolProxy::ENABLED_CAPABILITY - tcp['capability_offered']).blank?
+  end
+
+  def registration_failure_redirect
+    redirect_url = "#{params[:launch_presentation_return_url]}?status=failure"
+    redirect redirect_url
   end
 
   # tool_proxy_signed_post
