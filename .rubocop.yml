@@ -1,7 +1,7 @@
 AllCops:
   Exclude:
-    - db/migrate/*.rb
-    - db/*.rb
+    - 'vendor/**/*'
+    - 'db/**/*'
 
 Metrics/LineLength:
   Max: 125
