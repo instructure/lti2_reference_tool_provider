@@ -8,16 +8,17 @@ describe ToolProxy do
   end
 
   describe 'to_json' do
-    let(:guid){ '12abc-12abc-12abc-12abc-12abc' }
-    let(:secret){ 'test_shared_secret' }
-    let(:tcp_url){ 'http://www.test.com/tcp' }
-    let(:request){ double(base_url: 'http://www.test.com') }
-    let(:tool_proxy){ ToolProxy.create!(guid: guid,
-                                        tcp_url: tcp_url,
-                                        shared_secret: 'shared_secret',
-                                        base_url: request.base_url
-                                       )}
-    let(:tp_json){ tool_proxy.to_json }
+    let(:guid) { '12abc-12abc-12abc-12abc-12abc' }
+    let(:secret) { 'test_shared_secret' }
+    let(:tcp_url) { 'http://www.test.com/tcp' }
+    let(:request) { double(base_url: 'http://www.test.com') }
+    let(:tool_proxy) do
+      ToolProxy.create!(guid: guid,
+                        tcp_url: tcp_url,
+                        shared_secret: 'shared_secret',
+                        base_url: request.base_url)
+    end
+    let(:tp_json) { tool_proxy.to_json }
 
     it "includes a valid '@context'" do
       expect(JSON.parse(tp_json)['@context']).to eq 'http://purl.imsglobal.org/ctx/lti/v2/ToolProxy'
@@ -36,20 +37,20 @@ describe ToolProxy do
     end
 
     context '#tool_profile' do
-      let(:tool_profile){ JSON.parse(tp_json)['tool_profile'] }
+      let(:tool_profile) { JSON.parse(tp_json)['tool_profile'] }
 
       it "includes 'lti_version'" do
         expect(tool_profile['lti_version']).to eq 'LTI-2p0'
       end
 
       it "includes a valid'product_instance'" do
-        expected_keys = ["guid", "product_info"]
+        expected_keys = %w(guid product_info)
         product_instance_keys = tool_profile['product_instance'].keys
         expect(product_instance_keys).to match_array(expected_keys)
       end
 
       it "includes a valid 'base_url_choice'" do
-        expected_keys = ["default_base_url", "selector"]
+        expected_keys = %w(default_base_url selector)
         base_url_keys = tool_profile['base_url_choice'].first.keys
         expect(base_url_keys).to match_array(expected_keys)
       end
@@ -60,21 +61,20 @@ describe ToolProxy do
       end
 
       it "includes a valid 'resource_handler'" do
-        expected_keys = ["resource_type", "resource_name", "message"]
+        expected_keys = %w(resource_type resource_name message)
         resource_handler_keys = tool_profile['resource_handler'].first.keys
         expect(resource_handler_keys).to match_array(expected_keys)
       end
 
       it "includes 'resource_handler' with a valid 'message'" do
-        expected_keys = ["message_type", "path", "enabled_capability"]
+        expected_keys = %w(message_type path enabled_capability)
         message_keys = tool_profile['resource_handler'].first['message'].first.keys
         expect(message_keys).to match_array(expected_keys)
       end
-
     end
 
     context '#security_contract' do
-      let(:security_contract){ JSON.parse(tp_json)['security_contract'] }
+      let(:security_contract) { JSON.parse(tp_json)['security_contract'] }
 
       it "includes 'tp_half_shared_secret'" do
         expect(security_contract['tp_half_shared_secret']).not_to be_nil
@@ -91,6 +91,5 @@ describe ToolProxy do
         expect(tool_proxy.tp_half_shared_secret).to eq first_value
       end
     end
-
   end
 end
