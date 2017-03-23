@@ -13,6 +13,7 @@ gem 'simple_oauth', git: 'https://github.com/westonkd/simple_oauth.git'
 gem 'sinatra'
 gem 'sinatra-activerecord', require: 'sinatra/activerecord'
 gem 'sqlite3'
+gem 'json-jwt'
 
 group :test, :development do
   gem 'pry-byebug'

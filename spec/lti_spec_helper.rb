@@ -3,6 +3,7 @@ require_relative 'spec_helper'
 RSpec.shared_context 'lti_spec_helper', shared_context: :metadata do
   include_context 'spec_helper'
 
+  let(:tool_proxy_url) { 'http://canvas.docker:80/api/lti/courses/2/tool_proxy' }
   let(:tool_consumer_profile) do
     {
       'lti_version' => 'LTI-2p0',
@@ -11,17 +12,29 @@ RSpec.shared_context 'lti_spec_helper', shared_context: :metadata do
         'User.id',
         'Security.splitSecret'
       ],
-      'service_offered' => [{
-        'endpoint' => 'http://canvas.docker:80/api/lti/courses/2/tool_proxy',
-        'format' => [
-          'application/vnd.ims.lti.v2.toolproxy+json'
-        ],
-        'action' => [
-          'POST'
-        ],
-        '@id' => 'http://canvas.docker/api/lti/courses/2/tool_consumer_profile/339b6700-e4cb-47c5-a54f-3ee0064921a9#ToolProxy.collection',
-        '@type' => 'RestService'
-      }],
+      'service_offered' => [
+        {
+          'endpoint' => tool_proxy_url,
+          'format' => [
+            'application/vnd.ims.lti.v2.toolproxy+json'
+          ],
+          'action' => [
+            'POST'
+          ],
+          '@id' => 'http://canvas.docker/api/lti/courses/2/tool_consumer_profile/339b6700-e4cb-47c5-a54f-3ee0064921a9#ToolProxy.collection',
+          '@type' => 'RestService'
+        }
+      ],
+      'security_profile' => [
+        {
+          'security_profile_name' => 'lti_oauth_hash_message_security',
+          'digest_algorithm' => ['HMAC-SHA1']
+        },
+        {
+          'security_profile_name' => 'oauth2_access_token_ws_security',
+          'digest_algorithm' => ['HS256']
+        }
+      ],
       '@id' => 'http://canvas.docker/api/lti/courses/2/tool_consumer_profile/339b6700-e4cb-47c5-a54f-3ee0064921a9',
       '@type' => 'ToolConsumerProfile',
       '@context' => [
@@ -45,8 +58,22 @@ RSpec.shared_context 'lti_spec_helper', shared_context: :metadata do
     }
   end
 
-  let(:tool_proxy_response) { double(body: tool_proxy_response_body.to_json, code: 201) }
-  let(:bad_tool_proxy_response) { double(body: { error: 'some error' }.to_json, code: 400) }
+  let(:access_token) {'2YotnFZFEjr1zCsicMWpAA'}
+
+  let(:authorization_server_response) do
+    double("authorization_server_response", parsed_response: {
+      "access_token" => access_token,
+      "token_type" => "Bearer",
+      "expires_in" => 3600
+    })
+  end
+
+  let(:tool_proxy_response) do
+    double("tool_proxy_response", body: tool_proxy_response_body.to_json, code: 201)
+  end
+  let(:bad_tool_proxy_response) do
+    double("bad_tool_proxy_response", body: { error: 'some error' }.to_json, code: 400)
+  end
 
   let(:launch_url) { 'http://localhost:9292/basic-launch' }
   let(:secret) do

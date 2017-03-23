@@ -20,11 +20,11 @@ class LtiController < Sinatra::Base
 
     # Redirect to Tool Consumer with 'status=failure' if the tool
     # consumer does not support all required capabilities (i.e. split
-    # secret).
+    # secret, or required security profiles).
     #
     # Alternatively fallback on registering with a traditional shared secret
     # the Tool Consumer does not support using.
-    registration_failure_redirect unless supports_required_capabilities?(tcp)
+    registration_failure_redirect unless supports_required_capabilities?(tcp) && support_oauth2_ws?(tcp)
 
     # 2. Register the tool proxy with the tool consumer (See section 6.1.3)
     #    - Find the ToolProxy.collection service endpoint from
@@ -34,8 +34,26 @@ class LtiController < Sinatra::Base
     #    - Construct the signed tool proxy request and send (See section 6.1.3)
     tool_proxy = ToolProxy.new(tcp_url: tcp_url,
                                base_url:  request.base_url)
-    signed_request = tool_proxy_signed_post(tool_proxy, tp_endpoint)
-    tp_response = HTTParty.post(tp_endpoint, signed_request)
+
+    #    - Get an OAuth2 token for making API calls
+    #      This involves creating a JWT that we will send to the tool consumer
+    #      authorization server in exchange for an access token
+    #      see section 3.2 of the LTI security Document
+    access_token = access_token_request(
+      aud: URI.parse(params['oauth2_access_token_url']),
+      sub: params[:reg_key],
+      secret: params[:reg_password]
+    )
+
+    #    - Construct the tool proxy create request
+    tool_proxy_request = {
+      headers: {
+        'Content-Type' => 'application/vnd.ims.lti.v2.toolproxy+json',
+        'Authorization' => "Bearer #{access_token}"
+      },
+      body: tool_proxy.to_json
+    }
+    tp_response = HTTParty.post(tp_endpoint, tool_proxy_request)
 
     # 3. Make the tool proxy available (See section 6.1.4)
     #    - Check for success and redirect to the tool consumer with proper
@@ -46,7 +64,7 @@ class LtiController < Sinatra::Base
     tool_proxy_guid = JSON.parse(tp_response.body)['tool_proxy_guid']
 
     #    - Get the tool consumer half of the shared split secret and construct
-    #    the complete shared secret (See section 5.6).
+    #      the complete shared secret (See section 5.6).
     tc_half_shared_secret = JSON.parse(tp_response.body)['tc_half_shared_secret']
     shared_secret = tc_half_shared_secret + tool_proxy.tp_half_shared_secret
 
@@ -94,6 +112,17 @@ class LtiController < Sinatra::Base
 
   private
 
+
+  # support_oauth2_ws?
+  #
+  # checks that the tool consumer supports the oauth2 ws profile
+  def support_oauth2_ws?(tool_profile)
+    profile = tool_profile['security_profile'].find do |p|
+      p['security_profile_name'] == 'oauth2_access_token_ws_security'
+    end
+    profile && profile['digest_algorithm'].include?('HS256')
+  end
+
   # tool_proxy_service_endpoint
   #
   # Finds the tool proxy collection service.
@@ -109,10 +138,10 @@ class LtiController < Sinatra::Base
     URI.parse(tp_services['endpoint']) unless tp_services.blank?
   end
 
-  # split_secret_capable_consumer?
+  # supports_required_capabilities??
   #
-  # Checks if the tool consumer supports split
-  # secret (See section 5.6).
+  # Checks if the tool consumer supports required capabilities
+  # i.e. split secret (See section 5.6).
   def supports_required_capabilities?(tcp)
     (ToolProxy::ENABLED_CAPABILITY - tcp['capability_offered']).blank?
   end
@@ -122,34 +151,53 @@ class LtiController < Sinatra::Base
     redirect redirect_url
   end
 
-  # tool_proxy_signed_post
+  # access_token
   #
-  # Creates a signed post request to register the
-  # tool proxy with the tool consumer (See section 6.1.3).
-  def tool_proxy_signed_post(tool_proxy, endpoint)
-    # Options for authorzation header (See https://oauth.net/core/1.0/ Section 5.4.1)
-    options = {
-      consumer_secret: params[:reg_password],
-      consumer_key: params[:reg_key],
-      body_hash: Digest::SHA1.base64digest(tool_proxy.to_json),
-      callback: 'about:blank'
-    }
-
-    # Assemble the authorization header
-    header = SimpleOAuth::Header.new(
-      :post,
-      endpoint,
-      {},
-      options
+  # Construct the JWT request used to get an access token from the Tool Consumer
+  # This access token can be used to register a tool proxy
+  # See section 3.2 of the LTI security document
+  #
+  # When requesting a JWT access token for use in creating a tool proxy
+  # the 'iss' should be set to the tools domain
+  # the 'sub' should be set to the reg_key parameter.
+  # the 'aud' should be set to the authorization server endpoint
+  # the 'iat' is the timestamp of when the JWT is created
+  # the 'exp' is the timestamp for when the JWT should be considered expired
+  # the 'jti' is a unique value to identify the JWT, it may be used as a nonce
+  # sent by the tool consumer in the registration request.
+  #
+  # When requesting a JWT access token for use in LTI2 API endpoints the
+  # 'sub' should be the tool proxy guid, the 'secret' should be the tool's
+  # shared secret, and the 'code' should be excluded.
+  #
+  # It should also be noted that the response from the authorization server
+  # includes 3 pieces of data:
+  # 'access_token': the token used to make api calls
+  # 'token_type': the type of token, currently the only supported type is 'Bearer'
+  # 'expires_in': when the token expires, we are only making one call with the token,
+  # so we aren't concerned with it's expiration. When using it for multiple api
+  # calls over a period of time, you should track the expiration.
+  def access_token_request(aud:, sub:, secret:)
+    assertion = JSON::JWT.new(
+      iss: request.host,
+      sub: sub,
+      aud: aud,
+      iat: Time.now.to_i,
+      exp: 1.minute.from_now,
+      jti: SecureRandom.uuid
     )
-
-    # Assemble and return the request
-    {
-      body: tool_proxy.to_json,
-      headers: {
-        'Content-Type' => 'application/vnd.ims.lti.v2.toolproxy+json',
-        'Authorization' => header.to_s
+    assertion = assertion.sign(secret, :HS256).to_s
+    request = {
+      # The body of the HTML POST includes two parameters: the 'grant_body', and the 'assertion'
+      # the grant_type must be equal to the string 'urn:ietf:params:oauth:grant-type:jwt-bearer'
+      # the assertion is the the JWT signed with the reg_password
+      body: {
+        grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+        assertion: assertion
       }
     }
-  end
+    response = HTTParty.post(aud, request)
+    response.parsed_response['access_token']
+    end
+
 end

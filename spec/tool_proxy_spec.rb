@@ -71,6 +71,14 @@ describe ToolProxy do
         message_keys = tool_profile['resource_handler'].first['message'].first.keys
         expect(message_keys).to match_array(expected_keys)
       end
+
+      it "includes 'security_profile' with the oauth2 ws security profile" do
+        profile = tool_profile['security_profile'].find do |p|
+          p['security_profile_name'] == 'oauth2_access_token_ws_security'
+        end
+        expect(profile['digest_algorithm']).to match_array ['HS256']
+      end
+
     end
 
     context '#security_contract' do
