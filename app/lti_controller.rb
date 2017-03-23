@@ -18,8 +18,9 @@ class LtiController < Sinatra::Base
     tcp_url = URI.parse(params[:tc_profile_url])
     tcp = JSON.parse(HTTParty.get(tcp_url))
 
-    # Render 'bad request' unless the Tool Consumer supports the needed
-    # capabilities (i.e. 'Security.splitSecret').
+    # Redirect to Tool Consumer with 'status=failure' if the tool
+    # consumer does not support all required capabilities (i.e. split
+    # secret).
     #
     # Alternatively fallback on registering with a traditional shared secret
     # the Tool Consumer does not support using.
