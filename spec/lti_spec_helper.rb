@@ -58,21 +58,22 @@ RSpec.shared_context 'lti_spec_helper', shared_context: :metadata do
     }
   end
 
-  let(:access_token) {'2YotnFZFEjr1zCsicMWpAA'}
+  let(:access_token) { '2YotnFZFEjr1zCsicMWpAA' }
 
   let(:authorization_server_response) do
-    double("authorization_server_response", parsed_response: {
-      "access_token" => access_token,
-      "token_type" => "Bearer",
-      "expires_in" => 3600
-    })
+    double('authorization_server_response', parsed_response:
+      {
+        'access_token' => access_token,
+        'token_type' => 'Bearer',
+        'expires_in' => 3600
+      })
   end
 
   let(:tool_proxy_response) do
-    double("tool_proxy_response", body: tool_proxy_response_body.to_json, code: 201)
+    double('tool_proxy_response', body: tool_proxy_response_body.to_json, code: 201)
   end
   let(:bad_tool_proxy_response) do
-    double("bad_tool_proxy_response", body: { error: 'some error' }.to_json, code: 400)
+    double('bad_tool_proxy_response', body: { error: 'some error' }.to_json, code: 400)
   end
 
   let(:launch_url) { 'http://localhost:9292/basic-launch' }

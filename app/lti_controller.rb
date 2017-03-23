@@ -202,6 +202,5 @@ class LtiController < Sinatra::Base
     }
     response = HTTParty.post(aud, request)
     response.parsed_response['access_token']
-    end
-
+  end
 end

@@ -10,9 +10,9 @@ describe LtiController do
   describe '/register' do
     let(:tcp_url) { '/tool-consumer-profile' }
     let(:return_url) { '/return-url' }
-    let(:reg_key) { 'key'}
+    let(:reg_key) { 'key' }
     let(:reg_password) { 'secret' }
-    let(:oauth2_access_token_url) {'http://example.com/authorization'}
+    let(:oauth2_access_token_url) { 'http://example.com/authorization' }
     let(:reg_launch_params) do
       {
         tc_profile_url: tcp_url,
@@ -25,13 +25,14 @@ describe LtiController do
 
     before(:each) do
       allow(HTTParty).to receive(:get).with(URI.parse(tcp_url), any_args).and_return(tool_consumer_profile.to_json)
-      allow(HTTParty).to receive(:post).with(URI.parse(oauth2_access_token_url), any_args).and_return(authorization_server_response)
+      allow(HTTParty).to receive(:post)
+        .with(URI.parse(oauth2_access_token_url), any_args)
+        .and_return(authorization_server_response)
       allow(HTTParty).to receive(:post).with(URI.parse(tool_proxy_url), any_args).and_return(tool_proxy_response)
     end
 
     context 'successful tool proxy registration' do
       it 'registers a tool proxy' do
-
         expect(HTTParty).to receive(:post)
           .with(URI.parse(tool_proxy_url), any_args)
           .and_return(tool_proxy_response)
@@ -39,7 +40,6 @@ describe LtiController do
       end
 
       it 'uses an oauth2 token to register the tool proxy' do
-
         expect(HTTParty).to receive(:post)
           .with(
             URI.parse(tool_proxy_url),
@@ -131,7 +131,6 @@ describe LtiController do
         post '/register', reg_launch_params
         expect(last_response.original_headers['Location']).to include('status=failure')
       end
-
     end
   end
 

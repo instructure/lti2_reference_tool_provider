@@ -78,7 +78,6 @@ describe ToolProxy do
         end
         expect(profile['digest_algorithm']).to match_array ['HS256']
       end
-
     end
 
     context '#security_contract' do
