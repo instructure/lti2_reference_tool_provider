@@ -139,7 +139,5 @@ class ToolProxy < ActiveRecord::Base
         'digest_algorithm' => ['HS256']
       }
     ]
-
   end
-
 end

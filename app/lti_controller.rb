@@ -24,7 +24,7 @@ class LtiController < Sinatra::Base
     #
     # Alternatively fallback on registering with a traditional shared secret
     # the Tool Consumer does not support using.
-    registration_failure_redirect unless supports_required_capabilities?(tcp) && support_oauth2_ws?(tcp)
+    registration_failure_redirect unless required_capabilities?(tcp) && support_oauth2_ws?(tcp)
 
     # 2. Register the tool proxy with the tool consumer (See section 6.1.3)
     #    - Find the ToolProxy.collection service endpoint from
@@ -46,14 +46,8 @@ class LtiController < Sinatra::Base
     )
 
     #    - Construct the tool proxy create request
-    tool_proxy_request = {
-      headers: {
-        'Content-Type' => 'application/vnd.ims.lti.v2.toolproxy+json',
-        'Authorization' => "Bearer #{access_token}"
-      },
-      body: tool_proxy.to_json
-    }
-    tp_response = HTTParty.post(tp_endpoint, tool_proxy_request)
+
+    tp_response = tool_proxy_request(tp_endpoint, access_token, tool_proxy)
 
     # 3. Make the tool proxy available (See section 6.1.4)
     #    - Check for success and redirect to the tool consumer with proper
@@ -112,7 +106,6 @@ class LtiController < Sinatra::Base
 
   private
 
-
   # support_oauth2_ws?
   #
   # checks that the tool consumer supports the oauth2 ws profile
@@ -138,17 +131,28 @@ class LtiController < Sinatra::Base
     URI.parse(tp_services['endpoint']) unless tp_services.blank?
   end
 
-  # supports_required_capabilities??
+  # required_capabilities??
   #
   # Checks if the tool consumer supports required capabilities
   # i.e. split secret (See section 5.6).
-  def supports_required_capabilities?(tcp)
+  def required_capabilities?(tcp)
     (ToolProxy::ENABLED_CAPABILITY - tcp['capability_offered']).blank?
   end
 
   def registration_failure_redirect
     redirect_url = "#{params[:launch_presentation_return_url]}?status=failure"
     redirect redirect_url
+  end
+
+  def tool_proxy_request(url, access_token, tool_proxy)
+    HTTParty.post(
+      url,
+      headers: {
+        'Content-Type' => 'application/vnd.ims.lti.v2.toolproxy+json',
+        'Authorization' => "Bearer #{access_token}"
+      },
+      body: tool_proxy.to_json
+    )
   end
 
   # access_token
