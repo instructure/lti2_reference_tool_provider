@@ -1,7 +1,6 @@
 FROM ruby:2.4
 MAINTAINER Instructure
 
-ENV PORT 3000
 ENV RACK_ENV "production"
 # Install postgres
 RUN apt-get update && apt-get install -y \

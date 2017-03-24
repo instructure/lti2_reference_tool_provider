@@ -5,6 +5,7 @@ services:
     links:
       - db
     environment:
+      PORT: 3000
       DATABASE_CONFIG: 'docker-compose-database.yml'
       VIRTUAL_HOST: lti.docker
       VIRTUAL_PORT: 3000

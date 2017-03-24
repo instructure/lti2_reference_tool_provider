@@ -3,11 +3,8 @@ require 'sinatra/activerecord/rake'
 
 environment = Sinatra::Base.environment
 
-puts '####################'
-puts environment
-puts '####################'
-if %w(test development).include? environment
-  require 'rspec/core/rake_task' if environment == 'test'
+if %i(test development).include? environment
+  require 'rspec/core/rake_task'
   require 'rubocop/rake_task'
   RSpec::Core::RakeTask.new(:spec)
   RuboCop::RakeTask.new(:rubocop) do |t|
