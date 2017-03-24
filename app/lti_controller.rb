@@ -31,7 +31,6 @@ class LtiController < Sinatra::Base
     #      the TCP (See section 10.1)
     tp_endpoint = tool_proxy_service_endpoint(tcp)
 
-    #    - Construct the signed tool proxy request and send (See section 6.1.3)
     tool_proxy = ToolProxy.new(tcp_url: tcp_url,
                                base_url:  request.base_url)
 
