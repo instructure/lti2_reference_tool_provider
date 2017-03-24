@@ -2,14 +2,15 @@ version: "3"
 services:
   web:
     build: .
+    command: rackup -p 3000
     links:
       - db
+    ports:
+      - "3000:3000"
     environment:
       PORT: 3000
       DATABASE_CONFIG: 'docker-compose-database.yml'
       VIRTUAL_HOST: lti.docker
-      VIRTUAL_PORT: 3000
-
   db:
     image: postgres
     environment:

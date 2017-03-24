@@ -17,5 +17,7 @@ ADD . /usr/src/app
 # Clean up APT and bundler when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Run app
-CMD bundle exec rackup
+RUN useradd -r -U docker
+RUN chown -R docker:docker $APP_HOME /usr/local/bundle
+
+USER docker
