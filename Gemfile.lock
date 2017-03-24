@@ -33,6 +33,7 @@ GEM
     multi_xml (0.6.0)
     parser (2.4.0.0)
       ast (~> 2.2)
+    pg (0.20.0)
     powerpack (0.1.1)
     pry (0.10.4)
       coderay (~> 1.1.0)
@@ -41,6 +42,7 @@ GEM
     pry-byebug (3.4.2)
       byebug (~> 9.0)
       pry (~> 0.10)
+    puma (3.8.2)
     rack (1.6.5)
     rack-protection (1.5.3)
       rack
@@ -89,10 +91,11 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activerecord
   database_cleaner
   httparty
+  pg
   pry-byebug
+  puma
   rack-test
   rake
   rb-readline

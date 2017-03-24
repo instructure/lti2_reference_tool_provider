@@ -5,7 +5,7 @@ if Gem::Version.new(Bundler::VERSION) < Gem::Version.new(BUNDLER_VERSION)
   abort "Bundler version >= #{BUNDLER_VERISION} is required"
 end
 
-gem 'activerecord', require: 'active_record'
+gem 'puma'
 gem 'httparty'
 gem 'rake'
 gem 'require_all'
@@ -13,6 +13,10 @@ gem 'simple_oauth', git: 'https://github.com/westonkd/simple_oauth.git'
 gem 'sinatra'
 gem 'sinatra-activerecord', require: 'sinatra/activerecord'
 gem 'sqlite3'
+
+group :docker do
+  gem 'pg'
+end
 
 group :test, :development do
   gem 'pry-byebug'

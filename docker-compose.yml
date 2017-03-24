@@ -1,0 +1,16 @@
+version: "3"
+services:
+  web:
+    build: .
+    links:
+      - db
+    environment:
+      DATABASE_CONFIG: 'docker-compose-database.yml'
+      VIRTUAL_HOST: lti.docker
+      VIRTUAL_PORT: 3000
+
+  db:
+    image: postgres
+    environment:
+      VIRTUAL_HOST: postgres.docker
+      VIRTUAL_PORT: 5432
