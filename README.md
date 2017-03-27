@@ -17,9 +17,7 @@ An LTI tool provider intended to be used as a reference for implementing the IMS
 
 ### Setup
 1. 'docker-compose build'
-2. 'docker-compose run --rm web bundle'
 3. 'docker-compose run --rm web bundle exec rake db:setup'
-4. 'docker-compose run --rm web bundle exec rake db:migrate'
 
 ### Running the server
 1. 'docker-compose up'
