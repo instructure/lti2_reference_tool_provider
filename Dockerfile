@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /usr/src/app
 ADD Gemfile /usr/src/Gemfile
 ADD Gemfile.lock /usr/src/Gemfile.lock
-RUN bundle install --without development test
+RUN bundle install --jobs=8 --quiet --without development test
 RUN mkdir tmp
 ADD . /usr/src/app
 
