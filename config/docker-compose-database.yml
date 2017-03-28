@@ -1,0 +1,15 @@
+production: &default
+  database: lti2_reference_tool_production
+  username: postgres
+  host: db
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+
+development:
+  <<: *default
+  database: lti2_reference_tool_development
+
+test:
+  <<: *default
+  database: lti2_reference_tool_test
