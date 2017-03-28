@@ -184,7 +184,7 @@ class LtiController < Sinatra::Base
     assertion = JSON::JWT.new(
       iss: request.host,
       sub: sub,
-      aud: aud,
+      aud: aud.to_s,
       iat: Time.now.to_i,
       exp: 1.minute.from_now,
       jti: SecureRandom.uuid
