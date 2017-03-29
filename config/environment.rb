@@ -7,4 +7,6 @@ ActiveRecord::Base.dump_schema_after_migration = false if ENV['RACK_ENV'] == 'pr
 
 set :database_file, ENV['DATABASE_CONFIG'] || 'default_database.yml'
 
+set :cache, ActiveSupport::Cache::MemoryStore.new
+
 require_all 'app'
