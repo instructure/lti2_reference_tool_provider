@@ -101,6 +101,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activesupport
   database_cleaner
   httparty
   json-jwt

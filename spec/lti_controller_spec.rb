@@ -135,17 +135,66 @@ describe LtiController do
   end
 
   describe '/basic-launch' do
-    it 'returns 404 if tool proxy not found' do
-      post '/basic-launch', params
-      expect(last_response).to be_not_found
-    end
-
-    it 'returns 401 if OAuth 1 signature is invalid' do
+    let(:tool_proxy) do
       ToolProxy.create!(guid: tool_proxy_guid,
                         shared_secret: secret,
                         tcp_url: 'test.com',
                         base_url: 'base.url.com')
-      post '/basic-launch', params
+    end
+
+    let(:params) do
+      {
+        lti_message_type: 'basic-lti-launch-request',
+        lti_version: 'LTI-2p0',
+        resource_link_id: '0f5c211411bd78638d3f024f771f7ae9d020a352',
+        user_id: '14e94b100f487430355fd888cf3d298ae474188b'
+      }
+    end
+
+    let(:oauth_attributes) do
+      {
+        consumer_key: tool_proxy.guid,
+        consumer_secret: tool_proxy.shared_secret,
+        callback: 'about:blank'
+      }
+    end
+
+    let(:signed_params) do
+      header = SimpleOAuth::Header.new(:post, 'http://example.org/basic-launch', params, oauth_attributes)
+      header.signed_attributes.merge(params)
+    end
+
+    it 'accepts a basic lti launch' do
+      post '/basic-launch', signed_params
+      expect(last_response).to be_ok
+    end
+
+    it 'returns 404 if tool proxy not found' do
+      tool_proxy.delete
+      post '/basic-launch', signed_params
+      expect(last_response).to be_not_found
+    end
+
+    it 'returns 401 if OAuth 1 signature is invalid' do
+      signed_params[:oauth_signature] = 'bad signature'
+      post '/basic-launch', signed_params
+      expect(last_response).to be_unauthorized
+    end
+
+    it 'only accepts the nonce once' do
+      2.times { post '/basic-launch', signed_params }
+      expect(last_response).to be_unauthorized
+    end
+
+    it 'only accepts the timestamp if it is less than 5 minutes old' do
+      oauth_attributes[:timestamp] = 6.minutes.ago.to_i
+      post '/basic-launch', signed_params
+      expect(last_response).to be_unauthorized
+    end
+
+    it 'only accepts the timestamp if it is less than 1 minutes in the future' do
+      oauth_attributes[:timestamp] = 2.minutes.from_now
+      post '/basic-launch', signed_params
       expect(last_response).to be_unauthorized
     end
   end

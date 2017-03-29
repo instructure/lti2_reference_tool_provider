@@ -6,6 +6,7 @@ class LtiController < Sinatra::Base
   register Sinatra::ActiveRecordExtension
   set :views, -> { File.join(root, '/views') }
   set :protection, except: :frame_options
+  set :cache, Sinatra::Application.cache
 
   # register
   #
@@ -95,8 +96,8 @@ class LtiController < Sinatra::Base
     header = SimpleOAuth::Header.new(:post, launch_url, params, options)
 
     # Render unauthorized if the signature is invalid
-    # NOTE: A check should also be done to detect and reject duplicate
-    # nonces.
+    halt(401) unless check_and_store_nonce(params['oauth_nonce'], params['oauth_timestamp'].to_i, 5.minutes)
+
     halt(401) unless header.valid?
 
     # Render
@@ -201,5 +202,34 @@ class LtiController < Sinatra::Base
     }
     response = HTTParty.post(aud, request)
     response.parsed_response['access_token']
+  end
+
+  ##
+  #  Used to determine if the nonce is still valid
+  #
+  #  +nonce+:: This is the cache key used to check if the nonce key has been used
+  #  +timestamp+:: The timestamp of when the request was signed
+  #  +nonce_age+:: An ActiveSupport::Duration describing how old a nonce can be
+  #
+  #  The +nonce_age+ creates a range that the timestamp must fall between for the nonce to be valid
+  #  valid_range = +Time.now+ - (the +nonce_age+ duration)
+  #  i.e. if the current time was 2010-04-23T12:30:00Z and the +nonce_age+ was 30min
+  #  then the valid time range that the timestamp must fall between would
+  #  be "2010-04-23T12:30:00Z/2010-04-23T13:00:00Z"
+  #
+  #  =Time line Examples for valid and invalid timestamps
+  #
+  #  |---nonce_age---timestamp---Time.now---|  VALID
+  #
+  #  |---timestamp---nonce_age---Time.now---| INVALID
+  #
+  #  |---nonce_age---Time.now---timestamp---| INVALID
+  #
+  def check_and_store_nonce(nonce, timestamp, nonce_age)
+    allowed_future_skew = 60.seconds
+    valid = timestamp.between?(nonce_age.ago.to_i, (Time.now + allowed_future_skew).to_i)
+    valid = false if settings.cache.exist?("nonce_#{nonce}")
+    settings.cache.write("nonce_#{nonce}", 'OK', expires_in: nonce_age + allowed_future_skew) if valid
+    valid
   end
 end
