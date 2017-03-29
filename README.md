@@ -3,6 +3,8 @@
 [![Code Climate](https://codeclimate.com/github/instructure/lti2_reference_tool_provider.svg)](https://codeclimate.com/github/instructure/lti2_reference_tool_provider)
 [![Dependency Status](https://gemnasium.com/badges/github.com/instructure/lti2_reference_tool_provider.svg)](https://gemnasium.com/github.com/instructure/lti2_reference_tool_provider)
 
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
 An LTI tool provider intended to be used as a reference for implementing the IMS LTI 2.1 specification. Section numbers in the comments (i.e. “6.1.2”) refer to sections of the IMS LTI 2.1 specification.
 
 ## Running locally
