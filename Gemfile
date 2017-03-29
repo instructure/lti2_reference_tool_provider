@@ -5,6 +5,7 @@ if Gem::Version.new(Bundler::VERSION) < Gem::Version.new(BUNDLER_VERSION)
   abort "Bundler version >= #{BUNDLER_VERISION} is required"
 end
 
+gem 'activesupport'
 gem 'httparty'
 gem 'json-jwt'
 gem 'puma'
