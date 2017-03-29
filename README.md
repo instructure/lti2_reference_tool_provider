@@ -1,6 +1,7 @@
 # LTI 2.1 Reference Tool Provider
 [![Build Status](https://travis-ci.com/instructure/lti2_reference_tool_provider.svg?token=UMnURpbhsUhFfz7k4f7E&branch=master)](https://travis-ci.com/instructure/lti2_reference_tool_provider)
-[![Code Climate](https://codeclimate.com/github/instructure/lti2_reference_tool_provider.png)](https://codeclimate.com/github/instructure/lti2_reference_tool_provider)
+[![Code Climate](https://codeclimate.com/github/instructure/lti2_reference_tool_provider.svg)](https://codeclimate.com/github/instructure/lti2_reference_tool_provider)
+[![Dependency Status](https://gemnasium.com/badges/github.com/instructure/lti2_reference_tool_provider.svg)](https://gemnasium.com/github.com/instructure/lti2_reference_tool_provider)
 
 An LTI tool provider intended to be used as a reference for implementing the IMS LTI 2.1 specification. Section numbers in the comments (i.e. “6.1.2”) refer to sections of the IMS LTI 2.1 specification.
 
