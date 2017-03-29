@@ -154,9 +154,10 @@ class LtiController < Sinatra::Base
   #
   def check_and_store_nonce(nonce, timestamp, nonce_age)
     allowed_future_skew = 60.seconds
-    valid = timestamp.between?(nonce_age.ago.to_i, (Time.now + allowed_future_skew).to_i)
-    valid = false if settings.cache.exist?("nonce_#{nonce}")
-    settings.cache.write("nonce_#{nonce}", 'OK', expires_in: nonce_age + allowed_future_skew) if valid
+    cache_key = "nonce_#{nonce}"
+    valid = timestamp.between?(nonce_age.ago.to_i, (Time.now + allowed_future_skew).to_i) &&
+            !settings.cache.exist?(cache_key)
+    settings.cache.write(cache_key, 'OK', expires_in: nonce_age + allowed_future_skew) if valid
     valid
   end
 end
