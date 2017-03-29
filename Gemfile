@@ -6,6 +6,7 @@ if Gem::Version.new(Bundler::VERSION) < Gem::Version.new(BUNDLER_VERSION)
 end
 
 gem 'httparty'
+gem 'json-jwt'
 gem 'puma'
 gem 'rake'
 gem 'require_all'

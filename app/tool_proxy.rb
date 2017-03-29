@@ -53,7 +53,8 @@ class ToolProxy < ActiveRecord::Base
         'product_info' => product_info
       },
       'base_url_choice' => base_url_choice,
-      'resource_handler' => resource_handler
+      'resource_handler' => resource_handler,
+      'security_profile' => security_profile
     }
   end
 
@@ -122,5 +123,21 @@ class ToolProxy < ActiveRecord::Base
         'enabled_capability' => []
       }]
     }]
+  end
+
+  # security_profile
+  #
+  # Returns the security profile to be used in the tool profile (See section 5.1.7)
+  def security_profile
+    [
+      {
+        'security_profile_name' => 'lti_oauth_hash_message_security',
+        'digest_algorithm' => ['HMAC-SHA1']
+      },
+      {
+        'security_profile_name' => 'oauth2_access_token_ws_security',
+        'digest_algorithm' => ['HS256']
+      }
+    ]
   end
 end
