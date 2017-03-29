@@ -1,4 +1,4 @@
-source 'http://rubygems.org'
+source 'https://rubygems.org'
 
 BUNDLER_VERSION = '1.14.6'.freeze
 if Gem::Version.new(Bundler::VERSION) < Gem::Version.new(BUNDLER_VERSION)
