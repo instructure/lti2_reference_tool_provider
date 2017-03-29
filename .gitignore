@@ -2,6 +2,7 @@
 *.rbc
 *.sqlite3
 *DS_Store
+docker-compose.override.yml
 
 ## Environment normalization:
 /.bundle/
