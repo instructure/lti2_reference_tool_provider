@@ -95,10 +95,10 @@ class LtiController < Sinatra::Base
     launch_url = "#{request.base_url}#{request.path}"
     header = SimpleOAuth::Header.new(:post, launch_url, params, options)
 
-    # Render unauthorized if the signature is invalid
-    halt(401) unless check_and_store_nonce(params['oauth_nonce'], params['oauth_timestamp'].to_i, 5.minutes)
-
-    halt(401) unless header.valid?
+    # Render unauthorized if the signature is invalid, the nonce is already used or the timestamp is invalid
+    valid = check_and_store_nonce(params['oauth_nonce'], params['oauth_timestamp'].to_i, 5.minutes)
+    valid &&= header.valid?
+    halt(401) unless valid
 
     # Render
     erb :basic_launch
