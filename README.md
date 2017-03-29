@@ -1,5 +1,5 @@
 # LTI 2.1 Reference Tool Provider
-[![Build Status](https://travis-ci.com/instructure/lti2_reference_tool_provider.svg?token=UMnURpbhsUhFfz7k4f7E&branch=master)](https://travis-ci.com/instructure/lti2_reference_tool_provider)
+[![Build Status](https://travis-ci.org/instructure/ims-lti.svg?branch=master)](https://travis-ci.org/instructure/ims-lti)
 [![Code Climate](https://codeclimate.com/github/instructure/lti2_reference_tool_provider.svg)](https://codeclimate.com/github/instructure/lti2_reference_tool_provider)
 [![Dependency Status](https://gemnasium.com/badges/github.com/instructure/lti2_reference_tool_provider.svg)](https://gemnasium.com/github.com/instructure/lti2_reference_tool_provider)
 
