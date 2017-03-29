@@ -1,5 +1,7 @@
 ENV['RACK_ENV'] = 'test'
 require_relative '../config/environment'
+require 'coveralls'
+Coveralls.wear
 
 RSpec.shared_context 'spec_helper', shared_context: :metadata do
   RSpec.configure do |config|
