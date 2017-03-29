@@ -33,7 +33,7 @@ class LtiController < Sinatra::Base
     tp_endpoint = tool_proxy_service_endpoint(tcp)
 
     tool_proxy = ToolProxy.new(tcp_url: tcp_url,
-                               base_url:  request.base_url)
+                               base_url: request.base_url)
 
     #    - Get an OAuth2 token for making API calls
     #      This involves creating a JWT that we will send to the tool consumer
@@ -227,9 +227,10 @@ class LtiController < Sinatra::Base
   #
   def check_and_store_nonce(nonce, timestamp, nonce_age)
     allowed_future_skew = 60.seconds
-    valid = timestamp.between?(nonce_age.ago.to_i, (Time.now + allowed_future_skew).to_i)
-    valid = false if settings.cache.exist?("nonce_#{nonce}")
-    settings.cache.write("nonce_#{nonce}", 'OK', expires_in: nonce_age + allowed_future_skew) if valid
+    cache_key = "nonce_#{nonce}"
+    valid = timestamp.between?(nonce_age.ago.to_i, (Time.now + allowed_future_skew).to_i) &&
+            !settings.cache.exist?(cache_key)
+    settings.cache.write(cache_key, 'OK', expires_in: nonce_age + allowed_future_skew) if valid
     valid
   end
 end
