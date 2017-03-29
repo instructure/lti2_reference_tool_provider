@@ -21,6 +21,7 @@ group :docker do
 end
 
 group :test, :development do
+  gem 'coveralls', require: false
   gem 'pry-byebug'
   gem 'rb-readline'
   gem 'rubocop', '~> 0.47.1', require: false
