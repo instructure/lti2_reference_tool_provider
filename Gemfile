@@ -14,13 +14,13 @@ gem 'require_all'
 gem 'simple_oauth', git: 'https://github.com/westonkd/simple_oauth.git'
 gem 'sinatra'
 gem 'sinatra-activerecord', require: 'sinatra/activerecord'
-gem 'sqlite3'
 
 group :docker do
   gem 'pg'
 end
 
 group :test, :development do
+  gem 'sqlite3'
   gem 'pry-byebug'
   gem 'rb-readline'
   gem 'rubocop', '~> 0.47.1', require: false
