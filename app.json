@@ -1,0 +1,6 @@
+{
+  "name": "LTI 2 reference implementation",
+  "description": "A barebones LTI2 reference implementation",
+  "repository": "https://github.com/instructure/lti2_reference_tool_provider",
+  "keywords": ["lti", "ruby", "reference"]
+}

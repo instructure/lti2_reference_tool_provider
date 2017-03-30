@@ -4,6 +4,8 @@
 [![Dependency Status](https://gemnasium.com/badges/github.com/instructure/lti2_reference_tool_provider.svg)](https://gemnasium.com/github.com/instructure/lti2_reference_tool_provider)
 [![Coverage Status](https://coveralls.io/repos/github/instructure/lti2_reference_tool_provider/badge.svg?branch=coveralls)](https://coveralls.io/github/instructure/lti2_reference_tool_provider?branch=coveralls)
 
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
 An LTI tool provider intended to be used as a reference for implementing the IMS LTI 2.1 specification. Section numbers in the comments (i.e. “6.1.2”) refer to sections of the IMS LTI 2.1 specification.
 
 ## Running locally
