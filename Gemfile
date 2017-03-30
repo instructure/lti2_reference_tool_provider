@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 
-BUNDLER_VERSION = '1.14.6'.freeze
+BUNDLER_VERSION = '1.13.7'.freeze
 if Gem::Version.new(Bundler::VERSION) < Gem::Version.new(BUNDLER_VERSION)
-  abort "Bundler version >= #{BUNDLER_VERISION} is required"
+  abort "Bundler version >= #{BUNDLER_VERSION} is required"
 end
 
 gem 'activesupport'
@@ -14,7 +14,6 @@ gem 'require_all'
 gem 'simple_oauth', git: 'https://github.com/westonkd/simple_oauth.git'
 gem 'sinatra'
 gem 'sinatra-activerecord', require: 'sinatra/activerecord'
-gem 'sqlite3'
 
 group :docker do
   gem 'pg'
@@ -25,6 +24,7 @@ group :test, :development do
   gem 'pry-byebug'
   gem 'rb-readline'
   gem 'rubocop', '~> 0.47.1', require: false
+  gem 'sqlite3'
 end
 
 group :test do
