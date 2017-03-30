@@ -20,10 +20,10 @@ group :docker do
 end
 
 group :test, :development do
-  gem 'sqlite3'
   gem 'pry-byebug'
   gem 'rb-readline'
   gem 'rubocop', '~> 0.47.1', require: false
+  gem 'sqlite3'
 end
 
 group :test do
