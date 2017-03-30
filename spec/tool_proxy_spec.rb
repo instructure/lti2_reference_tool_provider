@@ -3,10 +3,6 @@ require_relative 'lti_spec_helper'
 describe ToolProxy do
   include_context 'lti_spec_helper'
 
-  def app
-    ToolProxy
-  end
-
   describe 'to_json' do
     let(:guid) { '12abc-12abc-12abc-12abc-12abc' }
     let(:secret) { 'test_shared_secret' }
