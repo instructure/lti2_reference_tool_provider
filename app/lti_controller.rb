@@ -8,6 +8,10 @@ class LtiController < Sinatra::Base
   set :protection, except: :frame_options
   set :cache, Sinatra::Application.cache
 
+  get '/' do
+    erb :home #home page
+  end
+
   # register
   #
   # Handles incoming tool proxy registration requests, fetches

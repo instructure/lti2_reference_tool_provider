@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css" integrity="sha256-2YQRJMXD7pIAPHiXr0s+vlRWA7GYJEK0ARns7k2sbHY=" crossorigin="anonymous"/>
+</head>
+<body>
+<div class="container">
+  <div class="row">
+    <h1 style="text-align: center;">LTI 2 Reference Tool</h1>
+  </div>
+  <div class="row">
+    <label for="registrationURL">LTI 2 Registration Url:</label>
+    <input class="u-full-width" type="text" onClick="this.select();" id="registrationURL" value="<%= "#{request.base_url}/register" %> disabled ">
+  </div>
+
+  <div class="row">
+    The source code for this project can be found on <a href="https://github.com/instructure/lti2_reference_tool_provider">github</a>
+  </div>
+</body>
