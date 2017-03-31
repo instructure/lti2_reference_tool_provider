@@ -8,6 +8,10 @@ class LtiController < Sinatra::Base
   set :protection, except: :frame_options
   set :cache, Sinatra::Application.cache
 
+  get '/' do
+    erb :home # home page
+  end
+
   # register
   #
   # Handles incoming tool proxy registration requests, fetches
@@ -32,8 +36,7 @@ class LtiController < Sinatra::Base
     #      the TCP (See section 10.1)
     tp_endpoint = tool_proxy_service_endpoint(tcp)
 
-    tool_proxy = ToolProxy.new(tcp_url: tcp_url,
-                               base_url: request.base_url)
+    tool_proxy = ToolProxy.new(tcp_url: tcp_url, base_url: request.base_url)
 
     #    - Get an OAuth2 token for making API calls
     #      This involves creating a JWT that we will send to the tool consumer

@@ -7,6 +7,13 @@ describe LtiController do
     LtiController
   end
 
+  describe '/' do
+    it 'has a home page' do
+      get '/'
+      expect(last_response).to be_ok
+    end
+  end
+
   describe '/register' do
     let(:tcp_url) { '/tool-consumer-profile' }
     let(:return_url) { '/return-url' }
