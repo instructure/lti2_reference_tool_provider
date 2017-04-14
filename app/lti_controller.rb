@@ -195,7 +195,7 @@ class LtiController < Sinatra::Base
     )
     assertion = assertion.sign(secret, :HS256).to_s
     request = {
-      # The body of the HTML POST includes two parameters: the 'grant_body', and the 'assertion'
+      # The body of the HTML POST includes two parameters: the 'grant_type', and the 'assertion'
       # the grant_type must be equal to the string 'urn:ietf:params:oauth:grant-type:jwt-bearer'
       # the assertion is the the JWT signed with the reg_password
       body: {
