@@ -134,7 +134,7 @@ class LtiController < Sinatra::Base
     URI.parse(tp_services['endpoint']) unless tp_services.blank?
   end
 
-  # required_capabilities??
+  # required_capabilities?
   #
   # Checks if the tool consumer supports required capabilities
   # i.e. split secret (See section 5.6).
