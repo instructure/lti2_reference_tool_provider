@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 
-BUNDLER_VERSION = '1.13.7'.freeze
+BUNDLER_VERSION = '1.13.7'
 if Gem::Version.new(Bundler::VERSION) < Gem::Version.new(BUNDLER_VERSION)
   abort "Bundler version >= #{BUNDLER_VERSION} is required"
 end
@@ -23,7 +25,7 @@ group :test, :development do
   gem 'coveralls', require: false
   gem 'pry-byebug'
   gem 'rb-readline'
-  gem 'rubocop', '~> 0.47.1', require: false
+  gem 'rubocop', '~> 0.53.0', require: false
   gem 'sqlite3'
 end
 

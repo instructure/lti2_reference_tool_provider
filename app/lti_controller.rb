@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'securerandom'
 # LtiController
 #
@@ -14,18 +16,17 @@ class LtiController < Sinatra::Base
 
   # register
   #
-  # Handles incoming tool proxy registration requests, fetches
-  # the tool consumer profile from the tool consumer, and
-  # creates a tool proxy in the tool consumer. See section
-  # 4.5 of the LTI 2.1 spec
+  # Handles incoming tool proxy registration requests, fetches the tool
+  # consumer profile from the tool consumer, and creates a tool proxy in the
+  # tool consumer. See section 4.5 of the LTI 2.1 spec
   post '/register' do
     # 1. Fetch tool consumer profile (See section 6.1.2)
     tcp_url = URI.parse(params[:tc_profile_url])
     tcp = JSON.parse(HTTParty.get(tcp_url))
 
-    # Redirect to Tool Consumer with 'status=failure' if the tool
-    # consumer does not support all required capabilities (i.e. split
-    # secret, or required security profiles).
+    # Redirect to Tool Consumer with 'status=failure' if the tool consumer does
+    # not support all required capabilities (i.e. split secret, or required
+    # security profiles).
     #
     # Alternatively fallback on registering with a traditional shared secret
     # the Tool Consumer does not support using.
@@ -95,13 +96,16 @@ class LtiController < Sinatra::Base
       consumer_secret: shared_secret,
       callback: 'about:blank'
     }
+
+    # this key is from sinatra, which messes up oauth signature validation
+    params.delete(:captures)
+
     launch_url = "#{request.base_url}#{request.path}"
     header = SimpleOAuth::Header.new(:post, launch_url, params, options)
 
     # Render unauthorized if the signature is invalid, the nonce is already used or the timestamp is invalid
     valid = check_and_store_nonce(params['oauth_nonce'], params['oauth_timestamp'].to_i, 5.minutes)
-    valid &&= header.valid?
-    halt(401) unless valid
+    halt(401) unless valid && header.valid?
 
     # Render
     erb :basic_launch

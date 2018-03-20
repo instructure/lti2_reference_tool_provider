@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'spec_helper'
 
 RSpec.shared_context 'lti_spec_helper', shared_context: :metadata do
