@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'sinatra/activerecord'
 
 # ToolProxy
@@ -6,8 +8,8 @@ require 'sinatra/activerecord'
 class ToolProxy < ActiveRecord::Base
   validates :guid, :shared_secret, :tcp_url, :base_url, :tp_half_shared_secret, presence: true
 
-  TOOL_PROXY_FORMAT = 'application/vnd.ims.lti.v2.toolproxy+json'.freeze
-  ENABLED_CAPABILITY = %w(Security.splitSecret).freeze
+  TOOL_PROXY_FORMAT = 'application/vnd.ims.lti.v2.toolproxy+json'
+  ENABLED_CAPABILITY = %w[Security.splitSecret].freeze
 
   # to_json
   #
@@ -37,7 +39,7 @@ class ToolProxy < ActiveRecord::Base
   # Generates a 128 hexadecimal character string for the Tool Provider's
   # half of the shared secret (See section 5.6).
   def tp_half_shared_secret
-    @_tp_half_shared_secret ||= SecureRandom.hex(64)
+    @tp_half_shared_secret ||= SecureRandom.hex(64)
   end
 
   private

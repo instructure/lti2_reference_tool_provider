@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'lti_spec_helper'
 
 describe LtiController do

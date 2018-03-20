@@ -4,6 +4,7 @@
 *DS_Store
 docker-compose.override.yml
 coverage/
+.byebug_history
 
 ## Environment normalization:
 /.bundle/
