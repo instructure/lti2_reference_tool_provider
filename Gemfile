@@ -15,7 +15,7 @@ gem 'rake'
 gem 'require_all'
 gem 'simple_oauth', git: 'https://github.com/westonkd/simple_oauth.git'
 gem 'sinatra'
-gem 'sinatra-activerecord', require: 'sinatra/activerecord'
+gem 'sinatra-activerecord', '>= 2.0.13', require: 'sinatra/activerecord'
 
 group :docker do
   gem 'pg'
